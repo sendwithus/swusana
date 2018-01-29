@@ -90,7 +90,14 @@ var pmInt = setInterval(function() {
     if ($('#TaskDescription-textEditor').html()) {
         var md = '';
         $('*', $('#TaskDescription-textEditor')).each(function(index, item){
-            md += $(item).text() + '\n';
+            if ($(item).clone().children().remove().end().text() !== '') {
+                if ($(item).prop("tagName").toLowerCase() === 'a') {
+                    md += '<a href="' + $(item).text() + '">' + $(item).text() + '</a>';
+                } else {
+                    md += $(item).text();
+                }
+            }
+            md += '\n';
         });
         var html = converter.makeHtml(md);
         if (!$('#description-markdown').length) {
@@ -99,4 +106,3 @@ var pmInt = setInterval(function() {
         $('#description-markdown').html(html);
     }
 }, 1000);
-
