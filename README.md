@@ -1,2 +1,5 @@
-# asana-markdown-tampermonkey
-A script to add markdown support to Asana
+# Swusana
+
+A script to  
+- hide noise in the comments / non-coloured tags from list views
+- add markdown support to Asana comments
