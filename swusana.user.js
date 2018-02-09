@@ -90,7 +90,7 @@ addGlobalStyle(css);
 setInterval(function() {
   // Noise hiding loop
   if (noiseButtonOn) {
-    $('.StoryFeed-miniStory, .TaskList .Pill--colorNone, .MiniHeartButton').not('.swusana-noise-hidden').each(function(index,item){
+    $('.StoryFeed-miniStory, .TaskList .Pill--colorNone, .TaskList .MiniHeartButton').not('.swusana-noise-hidden').each(function(index,item){
       $(item).addClass('swusana-noise');
       $(item).addClass('swusana-noise-hidden');
       $(item).hide();
