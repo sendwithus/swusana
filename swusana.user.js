@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.2
-// @description  Asana Productivity Enhancements including - Noise Reduction.  Github Markdown support.
+// @version      0.3
+// @description  Asana Productivity Enhancements including - Noise Reduction.  Github Markdown support.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
 // @grant        none
@@ -12,10 +12,76 @@
 // @require https://cdnjs.cloudflare.com/ajax/libs/he/1.1.1/he.min.js
 // ==/UserScript==
 
-// TODO create some buttons
+// TODO create some better buttons
 var noiseButton = $('<a id="noiseButton" class="NavigationLink Topbar-noiseButton swusana-button" href="javascript:;"><img height="24" src="https://image.flaticon.com/icons/png/128/699/699913.png"></a>');
 var markdownButton = $('<a id="markdownButton" class="NavigationLink Topbar-markdownButton swusana-button" href="javascript:;"><img height="24" src="https://cdn.iconscout.com/public/images/icon/premium/png-256/markdown-38571562f3f0d3e5-256x256.png"></a>');
 var blackoutButton = $('<a id="blackoutButton" class="NavigationLink Topbar-blackoutButton swusana-button" href="javascript:;"><img height="24" src="https://cdn2.iconfinder.com/data/icons/picons-basic-2/57/basic2-108_user_remove-128.png"></a>');
+var noiseButtonOn = false;
+var markdownButtonOn = false;
+var blackoutButtonOn = false;
+var blackoutProfileStyle = '';
+
+// ONLOAD
+$(document).ready(function(){
+    waitForEl('.Topbar-myDashboardButton', function(){
+        $('.Topbar-myDashboardButton').after(blackoutButton);
+        $('.Topbar-myDashboardButton').after(markdownButton);
+        $('.Topbar-myDashboardButton').after(noiseButton);
+        blackoutProfileStyle = $('.Topbar-accountInfo .Avatar').attr('style');
+
+
+        // BLACKOUT TRIGGERS
+        $('#blackoutButton').on('click', function(){
+            blackoutButtonOn = !blackoutButtonOn;
+            $(this).toggleClass('swusana-button-on');
+            Cookies.set('blackoutButtonStatus', blackoutButtonOn, { expires: 365 });
+            if (blackoutButtonOn) {
+                var confirmed = confirm('Please carefully confirm.  Blackout is about to be turned on and you will be auto-unfollowed on every task you click on.\n\nClick OK to turn on.\nClick Cancel to turn off.');
+                if (!confirmed){
+                    blackoutButtonOn = !blackoutButtonOn;
+                    Cookies.set('blackoutButtonStatus', blackoutButtonOn, { expires: 365 });
+                    $(this).toggleClass('swusana-button-on');
+                }
+            }
+        });
+
+        if (Cookies.get('blackoutButtonStatus') === 'true'){
+            $('#blackoutButton').trigger('click');
+        }
+
+        // NOISE TRIGGERS
+        $('#noiseButton').on('click', function(){
+            noiseButtonOn = !noiseButtonOn;
+            $(this).toggleClass('swusana-button-on');
+            Cookies.set('noiseButtonStatus', noiseButtonOn, { expires: 365 });
+            if (!noiseButtonOn){
+                $('.swusana-noise').show();
+                $('.swusana-noise').removeClass('swusana-noise-hidden');
+            }
+        });
+
+        if (Cookies.get('noiseButtonStatus') === 'true'){
+            $('#noiseButton').trigger('click');
+        }
+
+        // MARKDOWN TRIGGERS
+        $('#markdownButton').on('click', function(){
+            markdownButtonOn = !markdownButtonOn;
+            $(this).toggleClass('swusana-button-on');
+            Cookies.set('markdownButtonStatus', markdownButtonOn, { expires: 365 });
+            if (!markdownButtonOn){
+                $('.swusana-markdown-comment-original').show();
+                $('.swusana-markdown-comment').hide();
+            } else {
+                $('.swusana-markdown-comment-original').hide();
+                $('.swusana-markdown-comment').show();
+            }
+        });
+        if (Cookies.get('markdownButtonStatus') === 'true'){
+            $('#markdownButton').trigger('click');
+        }
+    });
+});
 
 // GLOBAL THINGS
 var converter = new showdown.Converter({tables: true, strikethrough: true});
@@ -88,69 +154,39 @@ addGlobalStyle(css);
 
 // EVENT LOOP
 setInterval(function() {
-  // Noise hiding loop
-  if (noiseButtonOn) {
-    $('.StoryFeed-miniStory, .TaskList .Pill--colorNone, .TaskList .MiniHeartButton').not('.swusana-noise-hidden').each(function(index,item){
-      $(item).addClass('swusana-noise');
-      $(item).addClass('swusana-noise-hidden');
-      $(item).hide();
-    });
-  }
-
-  // Markdown loop
-  $('.RichText').not('.swusana-markdown-comment-original').each(function(index, item){
-    var md = $(item).html().replace(/<br>/g, '\n');
-    md = he.decode(md);
-    var html = '<div class="swusana-markdown swusana-markdown-comment" ' + (markdownButtonOn ? '' : 'style="display:none;"') + '>' + converter.makeHtml(md) + '</div>';
-    $(item).before(html);
-    $(item).addClass('swusana-markdown-comment-original');
-    if (markdownButtonOn) {
-      $(item).hide();
+    // blackout loop
+    if (blackoutButtonOn) {
+        $('.RemovableAvatar-avatarRemoveButton').each(function(index,item){
+            var followStyle = $(item).siblings('.Avatar').attr('style');
+            if(followStyle === blackoutProfileStyle) {
+                $('.TaskFollowers-toggleButton span').trigger('click');
+            }
+        });
     }
-  });
+
+    // Noise hiding loop
+    if (noiseButtonOn) {
+        $('.StoryFeed-miniStory, .TaskList .Pill--colorNone, .TaskList .MiniHeartButton').not('.swusana-noise-hidden').each(function(index,item){
+            $(item).addClass('swusana-noise');
+            $(item).addClass('swusana-noise-hidden');
+            $(item).hide();
+        });
+    }
+
+    // Markdown loop
+    $('.RichText').not('.swusana-markdown-comment-original').each(function(index, item){
+        var md = $(item).html().replace(/<br>/g, '\n');
+        md = he.decode(md);
+        var html = '<div class="swusana-markdown swusana-markdown-comment" ' + (markdownButtonOn ? '' : 'style="display:none;"') + '>' + converter.makeHtml(md) + '</div>';
+        $(item).before(html);
+        $(item).addClass('swusana-markdown-comment-original');
+        if (markdownButtonOn) {
+            $(item).hide();
+        }
+    });
 
 }, 250);
 
-
-//$('.Topbar-myDashboardButton').after(blackoutButton);
-$('.Topbar-myDashboardButton').after(markdownButton);
-$('.Topbar-myDashboardButton').after(noiseButton);
-
-var noiseButtonOn = false;
-var markdownButtonOn = false;
-var blackoutButtonOn = false;
-
-// NOISE TRIGGERS
-$('#noiseButton').on('click', function(){
-  noiseButtonOn = !noiseButtonOn;
-  $(this).toggleClass('swusana-button-on');
-  Cookies.set('noiseButtonStatus', noiseButtonOn, { expires: 365 });
-  if (!noiseButtonOn){
-    $('.swusana-noise').show();
-    $('.swusana-noise').removeClass('swusana-noise-hidden');
-  }
-});
-
-if (Cookies.get('noiseButtonStatus') === 'true'){
-  $('#noiseButton').trigger('click');
-}
-
-// MARKDOWN TRIGGERS
-$('#markdownButton').on('click', function(){
-  markdownButtonOn = !markdownButtonOn;
-  $(this).toggleClass('swusana-button-on');
-  Cookies.set('markdownButtonStatus', markdownButtonOn, { expires: 365 });
-  if (!markdownButtonOn){
-      $('.swusana-markdown-comment-original').show();
-      $('.swusana-markdown-comment').hide();
-  } else {
-      $('.swusana-markdown-comment-original').hide();
-      $('.swusana-markdown-comment').show();
-  }
-});
-if (Cookies.get('markdownButtonStatus') === 'true'){
-  $('#markdownButton').trigger('click');
-}
 
 function addGlobalStyle(css) {
     var head, style;
@@ -161,3 +197,13 @@ function addGlobalStyle(css) {
     style.innerHTML = css;
     head.appendChild(style);
 }
+
+var waitForEl = function(selector, callback) {
+  if (jQuery(selector).length) {
+    callback();
+  } else {
+    setTimeout(function() {
+      waitForEl(selector, callback);
+    }, 100);
+  }
+};
