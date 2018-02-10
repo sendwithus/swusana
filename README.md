@@ -1,8 +1,9 @@
 # Swusana
 
 A script to  
-- hide noise in the comments / non-coloured tags from list views
-- add markdown support to Asana comments
+- hide noise in the comments / non-coloured tags from list views.
+- add markdown support to Asana comments.
+- a blackout period button that auto-unfollows you from all tasks while it is activated.
 
 Currently only tested in Chrome.
 
