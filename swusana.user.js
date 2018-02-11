@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      0.5
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Github Markdown support.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -13,13 +13,14 @@
 // ==/UserScript==
 
 // TODO create some better buttons
-var noiseButton = $('<a id="noiseButton" class="NavigationLink Topbar-noiseButton swusana-button" href="javascript:;"><img height="24" src="https://image.flaticon.com/icons/png/128/699/699913.png"></a>');
-var markdownButton = $('<a id="markdownButton" class="NavigationLink Topbar-markdownButton swusana-button" href="javascript:;"><img height="24" src="https://cdn.iconscout.com/public/images/icon/premium/png-256/markdown-38571562f3f0d3e5-256x256.png"></a>');
-var blackoutButton = $('<a id="blackoutButton" class="NavigationLink Topbar-blackoutButton swusana-button" href="javascript:;"><img height="24" src="https://cdn2.iconfinder.com/data/icons/picons-basic-2/57/basic2-108_user_remove-128.png"></a>');
+var noiseButton = $('<a id="noiseButton" title="hide/show noise" class="NavigationLink Topbar-noiseButton swusana-button" href="javascript:;"><img height="24" src="https://image.flaticon.com/icons/png/128/699/699913.png"></a>');
+var markdownButton = $('<a id="markdownButton" title="turn on/off markdown" class="NavigationLink Topbar-markdownButton swusana-button" href="javascript:;"><img height="24" src="https://cdn.iconscout.com/public/images/icon/premium/png-256/markdown-38571562f3f0d3e5-256x256.png"></a>');
+var blackoutButton = $('<a id="blackoutButton" title="turn on/off blackout period" class="NavigationLink Topbar-blackoutButton swusana-button" href="javascript:;"><img height="24" src="https://cdn2.iconfinder.com/data/icons/picons-basic-2/57/basic2-108_user_remove-128.png"></a>');
 var noiseButtonOn = false;
 var markdownButtonOn = false;
 var blackoutButtonOn = false;
 var blackoutProfileStyle = '';
+var converter = new showdown.Converter({tables: true, strikethrough: true});
 
 // ONLOAD
 $(document).ready(function(){
@@ -28,7 +29,6 @@ $(document).ready(function(){
         $('.Topbar-myDashboardButton').after(markdownButton);
         $('.Topbar-myDashboardButton').after(noiseButton);
         blackoutProfileStyle = $('.Topbar-accountInfo .Avatar').attr('style');
-
 
         // BLACKOUT TRIGGERS
         $('#blackoutButton').on('click', function(){
@@ -83,8 +83,75 @@ $(document).ready(function(){
     });
 });
 
-// GLOBAL THINGS
-var converter = new showdown.Converter({tables: true, strikethrough: true});
+// EVENT LOOP
+setInterval(function() {
+    // blackout loop
+    if (blackoutButtonOn) {
+        $('.RemovableAvatar-avatarRemoveButton').each(function(index,item){
+            var followStyle = $(item).siblings('.Avatar').attr('style');
+            if(followStyle === blackoutProfileStyle) {
+                $('.TaskFollowers-toggleButton span').trigger('click');
+            }
+        });
+    }
+
+    // Noise hiding loop
+    if (noiseButtonOn) {
+        $('.StoryFeed-miniStory, .TaskList .Pill--colorNone, .TaskList .MiniHeartButton').not('.swusana-noise-hidden, .swusana-always-ignore').each(function(index,item){
+            if ($(item).text().indexOf(' created ') !== -1) {
+                $(item).addClass('swusana-always-ignore');
+            } else {
+                $(item).addClass('swusana-noise');
+                $(item).addClass('swusana-noise-hidden');
+                $(item).hide();
+            }
+        });
+    }
+
+    // Markdown loops
+    $('.truncatedRichText-expand').not('.swusana-always-ignore').each(function(index, item){
+        $(item).addClass('swusana-always-ignore');
+        $(item).on('click', function(){
+            $('.RichText').removeClass('swusana-markdown-comment-original');
+        });
+    });
+    $('.RichText').not('.swusana-markdown-comment-original, .swusana-always-ignore').each(function(index, item){
+        var md = $(item).html().replace(/<br>/g, '\n\n');
+        md = he.decode(md);
+        var html = '<div class="swusana-markdown swusana-markdown-comment" ' + (markdownButtonOn ? '' : 'style="display:none;"') + '>' + converter.makeHtml(md) + '</div>';
+        if (!$(item).is(':visible')) {
+            $(item).siblings('.swusana-markdown-comment').replaceWith(html);
+        } else {
+            $(item).before(html);
+        }
+        $(item).addClass('swusana-markdown-comment-original');
+        if (markdownButtonOn) {
+            $(item).hide();
+        }
+    });
+
+}, 250);
+
+
+function addGlobalStyle(css) {
+    var head, style;
+    head = document.getElementsByTagName('head')[0];
+    if (!head) { return; }
+    style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = css;
+    head.appendChild(style);
+}
+
+var waitForEl = function(selector, callback) {
+  if (jQuery(selector).length) {
+    callback();
+  } else {
+    setTimeout(function() {
+      waitForEl(selector, callback);
+    }, 100);
+  }
+};
 
 // STYLE
 var css =
@@ -151,63 +218,3 @@ var css =
     '.swusana-markdown h2 { font-size:1.8em; margin-top: 7px; margin-bottom: 4px; }' +
     '.swusana-markdown h1 { font-size:2em; margin-top: 8px; margin-bottom: 5px; }';
 addGlobalStyle(css);
-
-// EVENT LOOP
-setInterval(function() {
-    // blackout loop
-    if (blackoutButtonOn) {
-        $('.RemovableAvatar-avatarRemoveButton').each(function(index,item){
-            var followStyle = $(item).siblings('.Avatar').attr('style');
-            if(followStyle === blackoutProfileStyle) {
-                $('.TaskFollowers-toggleButton span').trigger('click');
-            }
-        });
-    }
-
-    // Noise hiding loop
-    if (noiseButtonOn) {
-        $('.StoryFeed-miniStory, .TaskList .Pill--colorNone, .TaskList .MiniHeartButton').not('.swusana-noise-hidden, .swusana-always-ignore').each(function(index,item){
-            if ($(item).text().indexOf(' created ') !== -1) {
-                $(item).addClass('swusana-always-ignore');
-            } else {
-                $(item).addClass('swusana-noise');
-                $(item).addClass('swusana-noise-hidden');
-                $(item).hide();
-            }
-        });
-    }
-
-    // Markdown loop
-    $('.RichText').not('.swusana-markdown-comment-original, .swusana-always-ignore').each(function(index, item){
-        var md = $(item).html().replace(/<br>/g, '\n\n');
-        md = he.decode(md);
-        var html = '<div class="swusana-markdown swusana-markdown-comment" ' + (markdownButtonOn ? '' : 'style="display:none;"') + '>' + converter.makeHtml(md) + '</div>';
-        $(item).before(html);
-        $(item).addClass('swusana-markdown-comment-original');
-        if (markdownButtonOn) {
-            $(item).hide();
-        }
-    });
-
-}, 250);
-
-
-function addGlobalStyle(css) {
-    var head, style;
-    head = document.getElementsByTagName('head')[0];
-    if (!head) { return; }
-    style = document.createElement('style');
-    style.type = 'text/css';
-    style.innerHTML = css;
-    head.appendChild(style);
-}
-
-var waitForEl = function(selector, callback) {
-  if (jQuery(selector).length) {
-    callback();
-  } else {
-    setTimeout(function() {
-      waitForEl(selector, callback);
-    }, 100);
-  }
-};
