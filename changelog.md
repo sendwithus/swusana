@@ -1,10 +1,5 @@
 # Changelog
 
-0.6.0
---
-- moved to semver
-- fixed user name linking not working
-
 0.5
 --
 - show more bug fixed.
