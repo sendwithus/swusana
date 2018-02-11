@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.7.1
+// @version      0.8.0
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Github Markdown support.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -10,6 +10,7 @@
 // @require https://cdnjs.cloudflare.com/ajax/libs/showdown/1.8.6/showdown.min.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/he/1.1.1/he.min.js
+// @require https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js
 // ==/UserScript==
 
 // TODO create some better buttons
@@ -21,6 +22,9 @@ var markdownButtonOn = false;
 var blackoutButtonOn = false;
 var blackoutProfileStyle = '';
 var converter = new showdown.Converter({tables: true, strikethrough: true});
+
+$("head").append('<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet" type="text/css">');
+
 
 // ONLOAD
 $(document).ready(function(){
@@ -127,6 +131,9 @@ setInterval(function() {
             } else {
                 $(item).before(html);
             }
+            $('pre > code').each(function() {
+                hljs.highlightBlock(this);
+            });
             $(item).addClass('swusana-markdown-comment-original');
             if (markdownButtonOn) {
                 $(item).hide();
