@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.5
+// @version      0.6.0
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Github Markdown support.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -109,24 +109,29 @@ setInterval(function() {
     }
 
     // Markdown loops
+    // More button
     $('.truncatedRichText-expand').not('.swusana-always-ignore').each(function(index, item){
         $(item).addClass('swusana-always-ignore');
         $(item).on('click', function(){
             $('.RichText').removeClass('swusana-markdown-comment-original');
         });
     });
+    // comments
     $('.RichText').not('.swusana-markdown-comment-original, .swusana-always-ignore').each(function(index, item){
-        var md = $(item).html().replace(/<br>/g, '\n\n');
+        var md = $(item).html().replace(/<br>([^a-z^A-Z])/g, '\n$1').replace(/<br>/g, '\n\n').replace(/\&nbsp;/g, ' ');
         md = he.decode(md);
-        var html = '<div class="swusana-markdown swusana-markdown-comment" ' + (markdownButtonOn ? '' : 'style="display:none;"') + '>' + converter.makeHtml(md) + '</div>';
-        if (!$(item).is(':visible')) {
-            $(item).siblings('.swusana-markdown-comment').replaceWith(html);
-        } else {
-            $(item).before(html);
-        }
-        $(item).addClass('swusana-markdown-comment-original');
-        if (markdownButtonOn) {
-            $(item).hide();
+
+        if (md.indexOf('rel="nofollow noreferrer"') == -1){
+            var html = '<div class="swusana-markdown swusana-markdown-comment" ' + (markdownButtonOn ? '' : 'style="display:none;"') + '>' + converter.makeHtml(md) + '</div>';
+            if (!$(item).is(':visible')) {
+                $(item).siblings('.swusana-markdown-comment').replaceWith(html);
+            } else {
+                $(item).before(html);
+            }
+            $(item).addClass('swusana-markdown-comment-original');
+            if (markdownButtonOn) {
+                $(item).hide();
+            }
         }
     });
 
