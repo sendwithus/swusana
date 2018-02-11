@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.6.0
+// @version      0.6.1
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Github Markdown support.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -121,7 +121,7 @@ setInterval(function() {
         var md = $(item).html().replace(/<br>([^a-z^A-Z])/g, '\n$1').replace(/<br>/g, '\n\n').replace(/\&nbsp;/g, ' ');
         md = he.decode(md);
 
-        if (md.indexOf('rel="nofollow noreferrer"') == -1){
+        if (md.indexOf('rel="nofollow noreferrer"') == -1 || md.indexOf('class="NavigationLink"') !== -1){
             var html = '<div class="swusana-markdown swusana-markdown-comment" ' + (markdownButtonOn ? '' : 'style="display:none;"') + '>' + converter.makeHtml(md) + '</div>';
             if (!$(item).is(':visible')) {
                 $(item).siblings('.swusana-markdown-comment').replaceWith(html);
