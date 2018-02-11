@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      0.7.1
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Github Markdown support.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -97,7 +97,7 @@ setInterval(function() {
 
     // Noise hiding loop
     if (noiseButtonOn) {
-        $('.StoryFeed-miniStory, .TaskList .Pill--colorNone, .TaskList .MiniHeartButton').not('.swusana-noise-hidden, .swusana-always-ignore').each(function(index,item){
+        $('.StoryFeed-miniStory, .TaskList .Pill--colorNone, .TaskList .MiniHeartButton, .StoryFeed-separator').not('.StoryFeed-topSeparator, .swusana-noise-hidden, .swusana-always-ignore').each(function(index,item){
             if ($(item).text().indexOf(' created ') !== -1) {
                 $(item).addClass('swusana-always-ignore');
             } else {
@@ -117,11 +117,10 @@ setInterval(function() {
         });
     });
     // comments
-    $('.RichText').not('.swusana-markdown-comment-original, .swusana-always-ignore').each(function(index, item){
+    $('.truncatedRichText-richText').not('.swusana-markdown-comment-original, .swusana-always-ignore').each(function(index, item){
         var md = $(item).html().replace(/<br>([^a-z^A-Z])/g, '\n$1').replace(/<br>/g, '\n\n').replace(/\&nbsp;/g, ' ');
         md = he.decode(md);
-
-        if (md.indexOf('rel="nofollow noreferrer"') == -1 || md.indexOf('class="NavigationLink"') !== -1){
+        if (md.indexOf('rel="nofollow noreferrer"') == -1 || md.indexOf('class="NavigationLink"') !== -1 || $(item).attr('attr-swusana-md-attemps') === 'iii'){
             var html = '<div class="swusana-markdown swusana-markdown-comment" ' + (markdownButtonOn ? '' : 'style="display:none;"') + '>' + converter.makeHtml(md) + '</div>';
             if (!$(item).is(':visible')) {
                 $(item).siblings('.swusana-markdown-comment').replaceWith(html);
@@ -132,6 +131,11 @@ setInterval(function() {
             if (markdownButtonOn) {
                 $(item).hide();
             }
+        } else {
+            if (!$(item).attr('attr-swusana-md-attemps')){
+                $(item).attr('attr-swusana-md-attemps', 'i');
+            }
+            $(item).attr('attr-swusana-md-attemps', $(item).attr('attr-swusana-md-attemps') + 'i');
         }
     });
 
@@ -166,6 +170,7 @@ var css =
         'margin-bottom:2px;' +
         'padding: 3px;' +
     '}' +
+    '.StoryFeed-miniStory+.StoryFeed-blockStory { margin-top: 0 !important; }' +
     '.swusana-button-on { '+
         'border-bottom: 3px solid #AAAAAA;' +
     '}' +
