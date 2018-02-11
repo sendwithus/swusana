@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.4
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Github Markdown support.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -166,16 +166,20 @@ setInterval(function() {
 
     // Noise hiding loop
     if (noiseButtonOn) {
-        $('.StoryFeed-miniStory, .TaskList .Pill--colorNone, .TaskList .MiniHeartButton').not('.swusana-noise-hidden').each(function(index,item){
-            $(item).addClass('swusana-noise');
-            $(item).addClass('swusana-noise-hidden');
-            $(item).hide();
+        $('.StoryFeed-miniStory, .TaskList .Pill--colorNone, .TaskList .MiniHeartButton').not('.swusana-noise-hidden, .swusana-always-ignore').each(function(index,item){
+            if ($(item).text().indexOf(' created ') !== -1) {
+                $(item).addClass('swusana-always-ignore');
+            } else {
+                $(item).addClass('swusana-noise');
+                $(item).addClass('swusana-noise-hidden');
+                $(item).hide();
+            }
         });
     }
 
     // Markdown loop
-    $('.RichText').not('.swusana-markdown-comment-original').each(function(index, item){
-        var md = $(item).html().replace(/<br>/g, '\n');
+    $('.RichText').not('.swusana-markdown-comment-original, .swusana-always-ignore').each(function(index, item){
+        var md = $(item).html().replace(/<br>/g, '\n\n');
         md = he.decode(md);
         var html = '<div class="swusana-markdown swusana-markdown-comment" ' + (markdownButtonOn ? '' : 'style="display:none;"') + '>' + converter.makeHtml(md) + '</div>';
         $(item).before(html);
