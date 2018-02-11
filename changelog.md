@@ -1,9 +1,13 @@
 # Changelog
+
+0.8.0
+--
+- Syntax highlighting.
  
 0.6.0
 --
-- moved to semver
-- fixed user name linking not working
+- moved to semver.
+- fixed user name linking not working.
 
 0.5
 --
