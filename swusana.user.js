@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.8.1
+// @version      0.8.2
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Github Markdown support.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -45,7 +45,11 @@ $(document).ready(function(){
                     blackoutButtonOn = !blackoutButtonOn;
                     Cookies.set('blackoutButtonStatus', blackoutButtonOn, { expires: 365 });
                     $(this).toggleClass('swusana-button-on');
+                } else {
+                    $('#blackoutButton img').attr('src', 'https://media.giphy.com/media/79VehauAiiSLS/giphy.gif');
                 }
+            } else {
+                $('#blackoutButton img').attr('src', 'https://cdn2.iconfinder.com/data/icons/picons-basic-2/57/basic2-108_user_remove-128.png');
             }
         });
 
