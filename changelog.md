@@ -1,5 +1,9 @@
 # Changelog
 
+0.8.1
+--
+- fixed auto-unfollow on large screens bug
+
 0.8.0
 --
 - Syntax highlighting.
