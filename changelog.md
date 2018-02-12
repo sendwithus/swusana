@@ -1,5 +1,9 @@
 # Changelog
 
+0.8.2
+-- 
+- Red glowing dot when you turn on auto-unfollow
+
 0.8.1
 --
 - fixed auto-unfollow on large screens bug
