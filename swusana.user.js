@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.8.2
+// @version      0.8.4
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Github Markdown support.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -62,7 +62,9 @@ $(document).ready(function(){
             noiseButtonOn = !noiseButtonOn;
             $(this).toggleClass('swusana-button-on');
             Cookies.set('noiseButtonStatus', noiseButtonOn, { expires: 365 });
+            $('.lunaui-grid-center-pane-container#center_pane_container').css({ 'max-width': '1000px !important'});
             if (!noiseButtonOn){
+                $('.lunaui-grid-center-pane-container#center_pane_container').css({ 'max-width': '100% !important'});
                 $('.swusana-noise').show();
                 $('.swusana-noise').removeClass('swusana-noise-hidden');
             }
@@ -80,9 +82,13 @@ $(document).ready(function(){
             if (!markdownButtonOn){
                 $('.swusana-markdown-comment-original').show();
                 $('.swusana-markdown-comment').hide();
+                $('.swusana-markdown-description-original').show();
+                $('.swusana-markdown-description').hide();
             } else {
                 $('.swusana-markdown-comment-original').hide();
                 $('.swusana-markdown-comment').show();
+                $('.swusana-markdown-description-original').hide();
+                $('.swusana-markdown-description').show();
             }
         });
         if (Cookies.get('markdownButtonStatus') === 'true'){
@@ -149,7 +155,52 @@ setInterval(function() {
             $(item).attr('attr-swusana-md-attemps', $(item).attr('attr-swusana-md-attemps') + 'i');
         }
     });
+    // description
+    $('.SingleTaskPane-descriptionIcon').not('.swusana-markdown-description-button').each(function(index, item){
+        $(this).on('click', function(){
+            $(this).parent().siblings('.swusana-markdown-description-original').toggle();
+        });
+        $(this).attr('title', 'Click to toggle editable description');
+        $(this).addClass('swusana-markdown-description-button');
+    });
 
+    // TODO figure out if this can be merged into the comments processing block.  The only difference is the contents of the div.
+    $('.SingleTaskPane-description').each(function(index, item){
+        var j = $(this);
+        var parent = j.parent();
+        j.addClass('swusana-markdown-description-original');
+        if (markdownButtonOn && !parent.siblings('.swusana-markdown-description').is(':visible')) {
+            j.hide();
+        }
+        var md = '';
+        var textBits = $('*', $('#TaskDescription-textEditor'));
+        textBits.each(function(index, item){
+            var t = $(item).text();
+            if (textBits.eq(index+1).prop('tagName') && textBits.eq(index+1).prop('tagName').toLowerCase() === 'a') {
+                md += t.substring(0, t.length - textBits.eq(index+1).text().length-1) + '';
+            } else if (j.prop('tagName').toLowerCase() === 'br') {
+                md += '<br>';
+            } else if (j.prop('tagName').toLowerCase() === 'a') {
+                md += '<a href="' + t + '">' + t + '</a>\n';
+            }  else {
+                md += t;
+            }
+            md += '\n';
+        });
+        var html = '<div class="swusana-markdown-description swusana-markdown"' + (markdownButtonOn ? '' : ' style="display:none;"') + '>' + converter.makeHtml(md) + '</div>';
+
+        console.log(md, html);
+        // append or replace
+        if (parent.siblings('.swusana-markdown-description').length) {
+            parent.siblings('.swusana-markdown-description').replaceWith(html);
+        } else {
+            parent.before(html);
+        }
+
+        $('pre > code').each(function() {
+            hljs.highlightBlock(this);
+        });
+    });
 }, 250);
 
 
@@ -175,6 +226,7 @@ var waitForEl = function(selector, callback) {
 
 // STYLE
 var css =
+    '.lunaui-grid-center-pane-container#center_pane_container { max-width: 100% !important}' +
     '.swusana-button { '+
         'border: 3px solid white;' +
         'margin-right:5px;' +
