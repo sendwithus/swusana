@@ -1,11 +1,10 @@
 # Swusana
 
-Asana is great but some bits are annoying.  Doesn't support markdown.  There is a lot of noise on the detail page with stories telling you about who moved a task where and these sometimes obsuce the actual human comments.
-If you run meetings and take notes into Asana you get added as a follower to every task.
+Asana is great but some bits are annoying.  The list view is fixed at 1000px.  There is a lot of noise on the detail page with stories telling you about who moved a task where and these sometimes obsuce the actual human comments.
+If you run meetings and take notes into Asana you get added as a follower to every task which then pollutes your inbox with many notifications.
 
 This is a Tamper Monkey script to add buttons to the top nav bar of Asana that let you togle the following functionality: 
-- Noise reduction: hide noise in the comments / non-coloured tags from list views.
-- Markdown Support: add markdown support to Asana comments and code block syntax highighting.
+- Noise reduction and beautification: hide noise in the comments / non-coloured tags from list views.
 - Auto-unfollow: A blackout period button that auto-unfollows you from all tasks while it is activated.
 
 Currently only tested in Chrome.

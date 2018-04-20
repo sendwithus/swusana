@@ -1,27 +1,21 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.8.4
+// @version      0.8.6
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Github Markdown support.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
 // @grant        none
 // @require http://code.jquery.com/jquery-1.12.4.min.js
-// @require https://cdnjs.cloudflare.com/ajax/libs/showdown/1.8.6/showdown.min.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js
-// @require https://cdnjs.cloudflare.com/ajax/libs/he/1.1.1/he.min.js
-// @require https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js
 // ==/UserScript==
 
 // TODO create some better buttons
 var noiseButton = $('<a id="noiseButton" title="hide/show noise" class="NavigationLink Topbar-noiseButton swusana-button" href="javascript:;"><img height="24" src="https://image.flaticon.com/icons/png/128/699/699913.png"></a>');
-var markdownButton = $('<a id="markdownButton" title="turn on/off markdown" class="NavigationLink Topbar-markdownButton swusana-button" href="javascript:;"><img height="24" src="https://cdn.iconscout.com/public/images/icon/premium/png-256/markdown-38571562f3f0d3e5-256x256.png"></a>');
 var blackoutButton = $('<a id="blackoutButton" title="turn on/off blackout period" class="NavigationLink Topbar-blackoutButton swusana-button" href="javascript:;"><img height="24" src="https://cdn2.iconfinder.com/data/icons/picons-basic-2/57/basic2-108_user_remove-128.png"></a>');
 var noiseButtonOn = false;
-var markdownButtonOn = false;
 var blackoutButtonOn = false;
 var blackoutProfileStyle = '';
-var converter = new showdown.Converter({tables: true, strikethrough: true});
 
 $("head").append('<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet" type="text/css">');
 
@@ -30,7 +24,6 @@ $("head").append('<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.j
 $(document).ready(function(){
     waitForEl('.Topbar-myDashboardButton', function(){
         $('.Topbar-myDashboardButton').after(blackoutButton);
-        $('.Topbar-myDashboardButton').after(markdownButton);
         $('.Topbar-myDashboardButton').after(noiseButton);
         blackoutProfileStyle = $('.Topbar-accountInfo .Avatar').attr('style');
 
@@ -73,27 +66,6 @@ $(document).ready(function(){
         if (Cookies.get('noiseButtonStatus') === 'true'){
             $('#noiseButton').trigger('click');
         }
-
-        // MARKDOWN TRIGGERS
-        $('#markdownButton').on('click', function(){
-            markdownButtonOn = !markdownButtonOn;
-            $(this).toggleClass('swusana-button-on');
-            Cookies.set('markdownButtonStatus', markdownButtonOn, { expires: 365 });
-            if (!markdownButtonOn){
-                $('.swusana-markdown-comment-original').show();
-                $('.swusana-markdown-comment').hide();
-                $('.swusana-markdown-description-original').show();
-                $('.swusana-markdown-description').hide();
-            } else {
-                $('.swusana-markdown-comment-original').hide();
-                $('.swusana-markdown-comment').show();
-                $('.swusana-markdown-description-original').hide();
-                $('.swusana-markdown-description').show();
-            }
-        });
-        if (Cookies.get('markdownButtonStatus') === 'true'){
-            $('#markdownButton').trigger('click');
-        }
     });
 });
 
@@ -121,86 +93,6 @@ setInterval(function() {
             }
         });
     }
-
-    // Markdown loops
-    // More button
-    $('.truncatedRichText-expand').not('.swusana-always-ignore').each(function(index, item){
-        $(item).addClass('swusana-always-ignore');
-        $(item).on('click', function(){
-            $('.RichText').removeClass('swusana-markdown-comment-original');
-        });
-    });
-    // comments
-    $('.truncatedRichText-richText').not('.swusana-markdown-comment-original, .swusana-always-ignore').each(function(index, item){
-        var md = $(item).html().replace(/<br>([^a-z^A-Z])/g, '\n$1').replace(/<br>/g, '\n\n').replace(/\&nbsp;/g, ' ');
-        md = he.decode(md);
-        if (md.indexOf('rel="nofollow noreferrer"') == -1 || md.indexOf('class="NavigationLink"') !== -1 || $(item).attr('attr-swusana-md-attemps') === 'iii'){
-            var html = '<div class="swusana-markdown swusana-markdown-comment" ' + (markdownButtonOn ? '' : 'style="display:none;"') + '>' + converter.makeHtml(md) + '</div>';
-            if (!$(item).is(':visible')) {
-                $(item).siblings('.swusana-markdown-comment').replaceWith(html);
-            } else {
-                $(item).before(html);
-            }
-            $('pre > code').each(function() {
-                hljs.highlightBlock(this);
-            });
-            $(item).addClass('swusana-markdown-comment-original');
-            if (markdownButtonOn) {
-                $(item).hide();
-            }
-        } else {
-            if (!$(item).attr('attr-swusana-md-attemps')){
-                $(item).attr('attr-swusana-md-attemps', 'i');
-            }
-            $(item).attr('attr-swusana-md-attemps', $(item).attr('attr-swusana-md-attemps') + 'i');
-        }
-    });
-    // description
-    $('.SingleTaskPane-descriptionIcon').not('.swusana-markdown-description-button').each(function(index, item){
-        $(this).on('click', function(){
-            $(this).parent().siblings('.swusana-markdown-description-original').toggle();
-        });
-        $(this).attr('title', 'Click to toggle editable description');
-        $(this).addClass('swusana-markdown-description-button');
-    });
-
-    // TODO figure out if this can be merged into the comments processing block.  The only difference is the contents of the div.
-    $('.SingleTaskPane-description').each(function(index, item){
-        var j = $(this);
-        var parent = j.parent();
-        j.addClass('swusana-markdown-description-original');
-        if (markdownButtonOn && !parent.siblings('.swusana-markdown-description').is(':visible')) {
-            j.hide();
-        }
-        var md = '';
-        var textBits = $('*', $('#TaskDescription-textEditor'));
-        textBits.each(function(index, item){
-            var t = $(item).text();
-            if (textBits.eq(index+1).prop('tagName') && textBits.eq(index+1).prop('tagName').toLowerCase() === 'a') {
-                md += t.substring(0, t.length - textBits.eq(index+1).text().length-1) + '';
-            } else if (j.prop('tagName').toLowerCase() === 'br') {
-                md += '<br>';
-            } else if (j.prop('tagName').toLowerCase() === 'a') {
-                md += '<a href="' + t + '">' + t + '</a>\n';
-            }  else {
-                md += t;
-            }
-            md += '\n';
-        });
-        var html = '<div class="swusana-markdown-description swusana-markdown"' + (markdownButtonOn ? '' : ' style="display:none;"') + '>' + converter.makeHtml(md) + '</div>';
-
-        console.log(md, html);
-        // append or replace
-        if (parent.siblings('.swusana-markdown-description').length) {
-            parent.siblings('.swusana-markdown-description').replaceWith(html);
-        } else {
-            parent.before(html);
-        }
-
-        $('pre > code').each(function() {
-            hljs.highlightBlock(this);
-        });
-    });
 }, 250);
 
 
@@ -236,58 +128,5 @@ var css =
     '.StoryFeed-miniStory+.StoryFeed-blockStory { margin-top: 0 !important; }' +
     '.swusana-button-on { '+
         'border-bottom: 3px solid #AAAAAA;' +
-    '}' +
-    '.swusana-markdown { '+
-        'white-space: normal !important; ' +
-        'background-color: #FaFaFa !important;' +
-        'color: #666666; '+
-        'padding-left: 10px;' +
-        'padding-right: 10px;' +
-        'padding-top: 5px;' +
-        'padding-bottom: 5px;' +
-        'border-left: 4px solid #EEEEEE !important; ' +
-        'display: block; ' +
-    '}' +
-    '#description-markdown { ' +
-        'border-top: 1px solid #eeeeee;' +
-        'border-bottom: 1px solid #eeeeee;' +
-        'border-right: 1px solid #eeeeee;' +
-    '}' +
-    '.swusana-markdown p { margin-top: 5px; }' +
-    '.swusana-markdown table { ' +
-        'margin-top: 10px;' +
-        'margin-bottom: 10px;' +
-    '}' +
-    '.swusana-markdown td, .swusana-markdown th { ' +
-        'border-left: 1px solid #AAAAAA;' +
-        'padding-right: 5px; ' +
-        'padding-left: 4px; ' +
-    '}' +
-    '.swusana-markdown td { ' +
-        'border-top: 1px solid #AAAAAA;' +
-    '}' +
-    '.swusana-markdown blockquote { ' +
-        'border-left: 4px solid #8888FF;' +
-        'padding-left:10px;' +
-        'white-space: normal;' +
-    '}' +
-    '.swusana-markdown blockquote p { ' +
-        'margin: 0' +
-    '}' +
-    '.swusana-markdown ul li, .swusana-markdown ol li { ' +
-        'margin-left:25px;' +
-        'line-height: 1.2em;' +
-    '}' +
-    '.swusana-markdown ul li { ' +
-        'list-style-type: disc;' +
-    '}' +
-    '.swusana-markdown ol li { ' +
-        'list-style-type: decimal;' +
-    '}' +
-    '.swusana-markdown h6 { font-size:1em; font-weight: bold; margin-top: 3px; margin-bottom: 1px; }' +
-    '.swusana-markdown h5 { font-size:1.2em; margin-top: 4px; margin-bottom: 1px; }' +
-    '.swusana-markdown h4 { font-size:1.4em; margin-top: 5px; margin-bottom: 2px; }' +
-    '.swusana-markdown h3 { font-size:1.6em; margin-top: 6px; margin-bottom: 3px; }' +
-    '.swusana-markdown h2 { font-size:1.8em; margin-top: 7px; margin-bottom: 4px; }' +
-    '.swusana-markdown h1 { font-size:2em; margin-top: 8px; margin-bottom: 5px; }';
+    '}';
 addGlobalStyle(css);
