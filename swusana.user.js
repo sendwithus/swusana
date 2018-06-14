@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.8.6
-// @description  Asana Productivity Enhancements including - Noise Reduction.  Github Markdown support.  Blackout periods.
+// @version      0.8.7
+// @description  Asana Productivity Enhancements including - Noise Reduction.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
 // @grant        none
@@ -83,7 +83,7 @@ setInterval(function() {
 
     // Noise hiding loop
     if (noiseButtonOn) {
-        $('.StoryFeed-miniStory, .TaskList .Pill--colorNone, .TaskList .MiniHeartButton, .StoryFeed-separator').not('.StoryFeed-topSeparator, .swusana-noise-hidden, .swusana-always-ignore').each(function(index,item){
+        $('.TaskStoryFeed-miniStory, .TaskList .Pill--colorNone, .TaskList .MiniHeartButton, .StoryFeed-separator').not('.StoryFeed-topSeparator, .swusana-noise-hidden, .swusana-always-ignore').each(function(index,item){
             if ($(item).text().indexOf(' created ') !== -1 || $(item).text().indexOf(' duplicated ') !== -1) {
                 $(item).addClass('swusana-always-ignore');
             } else {
