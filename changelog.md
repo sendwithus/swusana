@@ -1,5 +1,9 @@
 # Changelog
 
+0.8.9
+--
+- Asana breaking style change fix 
+
 0.8.2
 -- 
 - Red glowing dot when you turn on auto-unfollow
