@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.8.10
+// @version      0.8.11
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -121,12 +121,17 @@ var waitForEl = function(selector, callback) {
 var css =
     '.lunaui-grid-center-pane-container#center_pane_container { max-width: 100% !important}' +
     '.swusana-button { '+
-        'border: 3px solid white;' +
+        'border-bottom: 3px solid white;' +
         'margin-left:10px;' +
         'padding: 3px;' +
+        'opacity: 0.7' +
+    '}' +
+    '.swusana-button:hover { '+
+        'opacity: 1;' +
     '}' +
     '.StoryFeed-miniStory+.StoryFeed-blockStory { margin-top: 0 !important; }' +
     '.swusana-button-on { '+
         'border-bottom: 3px solid #AAAAAA;' +
+        'opacity: 1' +
     '}';
 addGlobalStyle(css);
