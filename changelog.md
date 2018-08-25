@@ -1,6 +1,10 @@
 # Changelog
 
-0.9
+0.9.1
+--
+- Turn off image when not used.
+
+0.9.0
 --
 - Can now set a background image and the opacity is set to 0.93 for the foreground boxes.
 

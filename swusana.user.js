@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.9.0
+// @version      0.9.1
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -40,6 +40,8 @@ $(document).ready(function(){
                 $('#asana_ui').css('opacity', '0.93');
                 $('#bg_pattern').css('background-image', 'url(' + newImage + ')').css('background-repeat','no-repeat').css('background-size','110%').addClass('themeBackground-aqua');
                 Cookies.set('currentBackgroundImage', newImage, { expires: 365 });
+            } else {
+                $('#bg_pattern').css('background-image', '')
             }
         });
 
@@ -103,10 +105,6 @@ setInterval(function() {
                 $('.ToggleFollowButton-toggleText').trigger('click');
             }
         });
-    }
-
-    if (imageButtonOn) {
-       // $('#asana_main, #asana_ui').css('opacity', '0.93');
     }
 
     // Noise hiding loop
