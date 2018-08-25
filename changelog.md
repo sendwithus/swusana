@@ -1,5 +1,9 @@
 # Changelog
 
+0.9
+--
+- Can now set a background image and the opacity is set to 0.93 for the foreground boxes.
+
 0.8.9
 --
 - Asana breaking style change fix 
