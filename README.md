@@ -6,6 +6,7 @@ If you run meetings and take notes into Asana you get added as a follower to eve
 This is a Tamper Monkey script to add buttons to the top nav bar of Asana that let you togle the following functionality: 
 - Noise reduction and beautification: hide noise in the comments / non-coloured tags from list views.
 - Auto-unfollow: A blackout period button that auto-unfollows you from all tasks while it is activated.
+- Image: Set a custom background image from a URL.
 
 Currently only tested in Chrome.
 

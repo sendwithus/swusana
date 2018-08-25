@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.8.11
+// @version      0.9.0
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Blackout periods.
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -11,22 +11,45 @@
 // ==/UserScript==
 
 // TODO create some better buttons
+var imageButton = $('<a id="imageButton" title="add image" class="NavigationLink Topbar-imageButton swusana-button" href="javascript:;"><img height="24" src="https://cdn2.iconfinder.com/data/icons/media-and-navigation-buttons-round/512/Button_16-512.png"></a>')
 var noiseButton = $('<a id="noiseButton" title="hide/show noise" class="NavigationLink Topbar-noiseButton swusana-button" href="javascript:;"><img height="24" src="https://image.flaticon.com/icons/png/128/699/699913.png"></a>');
 var blackoutButton = $('<a id="blackoutButton" title="turn on/off blackout period" class="NavigationLink Topbar-blackoutButton swusana-button" href="javascript:;"><img height="24" src="https://cdn2.iconfinder.com/data/icons/picons-basic-2/57/basic2-108_user_remove-128.png"></a>');
 var noiseButtonOn = false;
 var blackoutButtonOn = false;
+var imageButtonOn = false;
 var blackoutProfileStyle = '';
 
-$("head").append('<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet" type="text/css">');
-
-
+// bg_pattern
 // ONLOAD
 var buttonBarLocation = '.topbarHelpMenuButton';
 $(document).ready(function(){
     waitForEl(buttonBarLocation, function(){
+        $(buttonBarLocation).after(imageButton);
         $(buttonBarLocation).after(blackoutButton);
         $(buttonBarLocation).after(noiseButton);
         blackoutProfileStyle = $('.TopbarPageHeaderGlobalActions .Avatar').attr('style');
+
+        // BLACKOUT TRIGGERS
+        $('#imageButton').on('click', function(){
+            imageButtonOn = !imageButtonOn;
+            $(this).toggleClass('swusana-button-on');
+            Cookies.set('imageButtonStatus', imageButtonOn, { expires: 365 });
+            var currentBackgroundImage = Cookies.get('currentBackgroundImage');
+            if (imageButtonOn) {
+                var newImage = prompt('Enter an image URL', currentBackgroundImage);
+                $('#asana_ui').css('opacity', '0.93');
+                $('#bg_pattern').css('background-image', 'url(' + newImage + ')').css('background-repeat','no-repeat').css('background-size','110%').addClass('themeBackground-aqua');
+                Cookies.set('currentBackgroundImage', newImage, { expires: 365 });
+            }
+        });
+
+        if (Cookies.get('imageButtonStatus') === 'true'){
+            $('#imageButton').toggleClass('swusana-button-on');
+            var newImage = Cookies.get('currentBackgroundImage');
+            $('#asana_ui').css('opacity', '0.93');
+            $('#bg_pattern').css('background-image', 'url(' + newImage + ')').css('background-repeat','no-repeat').css('background-size','110%').addClass('themeBackground-aqua');;
+            imageButtonOn = true;
+        }
 
         // BLACKOUT TRIGGERS
         $('#blackoutButton').on('click', function(){
@@ -80,6 +103,10 @@ setInterval(function() {
                 $('.ToggleFollowButton-toggleText').trigger('click');
             }
         });
+    }
+
+    if (imageButtonOn) {
+       // $('#asana_main, #asana_ui').css('opacity', '0.93');
     }
 
     // Noise hiding loop
