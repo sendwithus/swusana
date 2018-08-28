@@ -7,6 +7,7 @@ This is a Tamper Monkey script to add buttons to the top nav bar of Asana that l
 - Noise reduction and beautification: hide noise in the comments / non-coloured tags from list views.
 - Auto-unfollow: A blackout period button that auto-unfollows you from all tasks while it is activated.
 - Image: Set a custom background image from a URL.
+- Timer: Show a counter for a selected ticket (list view only) 
 
 Currently only tested in Chrome.
 
