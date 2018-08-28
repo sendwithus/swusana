@@ -4,7 +4,7 @@ Asana is great but some bits are annoying.  The list view is fixed at 1000px.  T
 If you run meetings and take notes into Asana you get added as a follower to every task which then pollutes your inbox with many notifications.
 
 This is a Tamper Monkey script to add buttons to the top nav bar of Asana that let you togle the following functionality: 
-- Noise reduction and beautification: hide noise in the comments / non-coloured tags from list views.
+- Noise reduction and beautification: hide noise in the comments.
 - Auto-unfollow: A blackout period button that auto-unfollows you from all tasks while it is activated.
 - Image: Set a custom background image from a URL.
 - Timer: Show a counter for a selected ticket (list view only) 
