@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.9.1
-// @description  Asana Productivity Enhancements including - Noise Reduction.  Blackout periods.
+// @version      0.10.0
+// @description  Asana Productivity Enhancements including - Noise Reduction.  Blackout periods.  Timer
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
 // @grant        none
@@ -14,22 +14,42 @@
 var imageButton = $('<a id="imageButton" title="add image" class="NavigationLink Topbar-imageButton swusana-button" href="javascript:;"><img height="24" src="https://cdn2.iconfinder.com/data/icons/media-and-navigation-buttons-round/512/Button_16-512.png"></a>')
 var noiseButton = $('<a id="noiseButton" title="hide/show noise" class="NavigationLink Topbar-noiseButton swusana-button" href="javascript:;"><img height="24" src="https://image.flaticon.com/icons/png/128/699/699913.png"></a>');
 var blackoutButton = $('<a id="blackoutButton" title="turn on/off blackout period" class="NavigationLink Topbar-blackoutButton swusana-button" href="javascript:;"><img height="24" src="https://cdn2.iconfinder.com/data/icons/picons-basic-2/57/basic2-108_user_remove-128.png"></a>');
+var timerButton = $('<a id="timerButton" title="time how long you are looking at a task" class="NavigationLink Topbar-timerButton swusana-button" href="javascript:;"><img height="24" src="https://cdn4.iconfinder.com/data/icons/time-date-management/512/timer-512.png"></a><div id="swusana-timer" style="display:none" class="swusana-timer"></div>');
 var noiseButtonOn = false;
 var blackoutButtonOn = false;
 var imageButtonOn = false;
+var timerButtonOn = false;
 var blackoutProfileStyle = '';
+var timer = 0;
 
-// bg_pattern
 // ONLOAD
 var buttonBarLocation = '.topbarHelpMenuButton';
 $(document).ready(function(){
     waitForEl(buttonBarLocation, function(){
+        $(buttonBarLocation).after(timerButton);
         $(buttonBarLocation).after(imageButton);
         $(buttonBarLocation).after(blackoutButton);
         $(buttonBarLocation).after(noiseButton);
         blackoutProfileStyle = $('.TopbarPageHeaderGlobalActions .Avatar').attr('style');
 
-        // BLACKOUT TRIGGERS
+
+        // TIMER TRIGGERS
+        $('#timerButton').on('click', function(){
+            timerButtonOn = !timerButtonOn;
+            $(this).toggleClass('swusana-button-on');
+            Cookies.set('timerButtonStatus', timerButtonOn, { expires: 365 });
+            if (timerButtonOn) {
+                $('#swusana-timer').show();
+            } else {
+                $('#swusana-timer').hide();
+            }
+        });
+
+        if (Cookies.get('timerButtonStatus') === 'true'){
+            $('#timerButton').trigger('click');
+        }
+
+        // IMAGE TRIGGERS
         $('#imageButton').on('click', function(){
             imageButtonOn = !imageButtonOn;
             $(this).toggleClass('swusana-button-on');
@@ -95,7 +115,28 @@ $(document).ready(function(){
     });
 });
 
-// EVENT LOOP
+// EVENT LOOPS
+var target = document.querySelector('#asana_ui');
+MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+
+var observer = new MutationObserver(function(mutations, observer) {
+    mutations.forEach(function(mutation) {
+
+        if (mutation.addedNodes) {
+            mutation.addedNodes.forEach(function(m){
+                if (m.classList && (m.classList.contains('SingleTaskPane') || m.classList.contains('PotListPage-detailsPane'))){
+                    timer = new Date().getTime();
+                }
+            });
+        }
+    });
+});
+
+observer.observe(target, {
+    subtree: true,
+    childList: true
+});
+
 setInterval(function() {
     // blackout loop
     if (blackoutButtonOn) {
@@ -118,6 +159,14 @@ setInterval(function() {
                 $(item).hide();
             }
         });
+    }
+
+    if (timerButtonOn){
+        var duration = parseInt((new Date().getTime() - timer)/1000);
+        var date = new Date(null);
+        date.setSeconds(duration); // specify value for SECONDS here
+        var timeString = date.toISOString().substr(15, 4);
+        $('#swusana-timer').html(timeString).css('background-color', duration < 30 ? '#b1f5b1' : duration < 60 ? '#eff953' : '#ff7e7e');
     }
 }, 250);
 
@@ -158,5 +207,12 @@ var css =
     '.swusana-button-on { '+
         'border-bottom: 3px solid #AAAAAA;' +
         'opacity: 1' +
+    '}' +
+    '.swusana-timer { margin-left: 6px;'+
+      'background-color: #b1f5b1;'+
+      'padding: 5px;'+
+      'border-radius: 8px;'+
+      'width: 28px;'+
+      'border: 2px solid #555555;'+
     '}';
 addGlobalStyle(css);
