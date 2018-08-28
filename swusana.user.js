@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.10.1
+// @version      0.10.2
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Blackout periods.  Timer
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -150,7 +150,7 @@ setInterval(function() {
 
     // Noise hiding loop
     if (noiseButtonOn) {
-        $('.TaskStoryFeed-miniStory, .TaskList .Pill--colorNone, .TaskList .MiniHeartButton, .TaskStoryFeed-separator').not('.StoryFeed-topSeparator, .swusana-noise-hidden, .swusana-always-ignore').each(function(index,item){
+        $('.TaskStoryFeed-miniStory, .TaskList .MiniHeartButton, .TaskStoryFeed-separator').not('.StoryFeed-topSeparator, .swusana-noise-hidden, .swusana-always-ignore').each(function(index,item){
             if ($(item).text().indexOf(' created ') !== -1 || $(item).text().indexOf(' duplicated ') !== -1) {
                 $(item).addClass('swusana-always-ignore');
             } else {
