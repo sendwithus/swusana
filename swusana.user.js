@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.10.0
+// @version      0.10.1
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Blackout periods.  Timer
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -12,9 +12,9 @@
 
 // TODO create some better buttons
 var imageButton = $('<a id="imageButton" title="add image" class="NavigationLink Topbar-imageButton swusana-button" href="javascript:;"><img height="24" src="https://cdn2.iconfinder.com/data/icons/media-and-navigation-buttons-round/512/Button_16-512.png"></a>')
-var noiseButton = $('<a id="noiseButton" title="hide/show noise" class="NavigationLink Topbar-noiseButton swusana-button" href="javascript:;"><img height="24" src="https://image.flaticon.com/icons/png/128/699/699913.png"></a>');
-var blackoutButton = $('<a id="blackoutButton" title="turn on/off blackout period" class="NavigationLink Topbar-blackoutButton swusana-button" href="javascript:;"><img height="24" src="https://cdn2.iconfinder.com/data/icons/picons-basic-2/57/basic2-108_user_remove-128.png"></a>');
-var timerButton = $('<a id="timerButton" title="time how long you are looking at a task" class="NavigationLink Topbar-timerButton swusana-button" href="javascript:;"><img height="24" src="https://cdn4.iconfinder.com/data/icons/time-date-management/512/timer-512.png"></a><div id="swusana-timer" style="display:none" class="swusana-timer"></div>');
+var noiseButton = $('<a id="noiseButton" title="hide/show noise" class="NavigationLink Topbar-noiseButton swusana-button" href="javascript:;"><img height="24" src="https://icon-rainbow.com/i/icon_00671/icon_006710_256.png"></a>');
+var blackoutButton = $('<a id="blackoutButton" title="turn on/off blackout period" class="NavigationLink Topbar-blackoutButton swusana-button" href="javascript:;"><img height="24" src="http://cdn.onlinewebfonts.com/svg/img_314578.png"></a>');
+var timerButton = $('<a id="timerButton" title="time how long you are looking at a task" class="NavigationLink Topbar-timerButton swusana-button" href="javascript:;"><img height="24" src="https://www.freeiconspng.com/uploads/timer-icon-15.png"></a><div id="swusana-timer" style="display:none" class="swusana-timer"></div>');
 var noiseButtonOn = false;
 var blackoutButtonOn = false;
 var imageButtonOn = false;
@@ -195,9 +195,8 @@ var waitForEl = function(selector, callback) {
 var css =
     '.lunaui-grid-center-pane-container#center_pane_container { max-width: 100% !important}' +
     '.swusana-button { '+
-        'border-bottom: 3px solid white;' +
-        'margin-left:10px;' +
-        'padding: 3px;' +
+        'margin-left: 8px;' +
+        'margin-bottom: -4px;' +
         'opacity: 0.7' +
     '}' +
     '.swusana-button:hover { '+
