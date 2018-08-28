@@ -1,5 +1,9 @@
 # Changelog
 
+0.10.0
+--
+- Timer that changes colour as you spend time on a ticket.  Resets when a new ticket is selected.
+
 0.9.1
 --
 - Turn off image when not used.
