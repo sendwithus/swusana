@@ -1,16 +1,18 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.10.3
+// @version      0.11.0
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Blackout periods.  Timer
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
-// @grant        none
+// @grant        GM_xmlhttpRequest
 // @require http://code.jquery.com/jquery-1.12.4.min.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js
 // ==/UserScript==
 
 // TODO create some better buttons
+var bugButton = $('<a id="bugButton" title="add bug" class="NavigationLink Topbar-imageButton swusana-button" href="javascript:;"><img height="24" src="https://us.123rf.com/450wm/blankstock/blankstock1409/blankstock140900675/31370510-bug-sign-icon-virus-symbol-software-bug-error-disinfection-circle-flat-button-with-shadow-modern-ui-.jpg?ver=6"></a>')
+var featureButton = $('<a id="featureButton" title="add bug" class="NavigationLink Topbar-imageButton swusana-button" href="javascript:;"><img height="24" src="http://cdn.onlinewebfonts.com/svg/img_346035.png"></a>')
 var imageButton = $('<a id="imageButton" title="add image" class="NavigationLink Topbar-imageButton swusana-button" href="javascript:;"><img height="24" src="https://cdn2.iconfinder.com/data/icons/media-and-navigation-buttons-round/512/Button_16-512.png"></a>')
 var noiseButton = $('<a id="noiseButton" title="hide/show noise" class="NavigationLink Topbar-noiseButton swusana-button" href="javascript:;"><img height="24" src="https://icon-rainbow.com/i/icon_00671/icon_006710_256.png"></a>');
 var blackoutButton = $('<a id="blackoutButton" title="turn on/off blackout period" class="NavigationLink Topbar-blackoutButton swusana-button" href="javascript:;"><img height="24" src="http://cdn.onlinewebfonts.com/svg/img_314578.png"></a>');
@@ -21,6 +23,38 @@ var imageButtonOn = false;
 var timerButtonOn = false;
 var blackoutProfileStyle = '';
 var timer = 0;
+var bugXml = '';
+var featureXml = '';
+
+GM_xmlhttpRequest({
+  method: "GET",
+  url: "https://raw.githubusercontent.com/sendwithus/swusana/master/templates/bug.xml",
+  headers: {
+    "User-Agent": "Mozilla/5.0",    // If not specified, navigator.userAgent will be used.
+    "Accept": "text/xml"            // If not specified, browser defaults will be used.
+  },
+  onload: function(response) {
+      bugXml = response.responseText;
+      bugXml = bugXml.replace(/\s+/g, ' ');
+      bugXml = bugXml.replace(/>\s*/g, '>');
+      bugXml = bugXml.replace(/\s*</g, '<');
+  }
+});
+
+GM_xmlhttpRequest({
+  method: "GET",
+  url: "https://raw.githubusercontent.com/sendwithus/swusana/master/templates/feature.xml",
+  headers: {
+    "User-Agent": "Mozilla/5.0",    // If not specified, navigator.userAgent will be used.
+    "Accept": "text/xml"            // If not specified, browser defaults will be used.
+  },
+  onload: function(response) {
+      featureXml = response.responseText;
+      featureXml = featureXml.replace(/\s+/g, ' ');
+      featureXml = featureXml.replace(/>\s*/g, '>');
+      featureXml = featureXml.replace(/\s*</g, '<');
+  }
+});
 
 // ONLOAD
 var buttonBarLocation = '.topbarHelpMenuButton';
@@ -30,6 +64,8 @@ $(document).ready(function(){
         $(buttonBarLocation).after(imageButton);
         $(buttonBarLocation).after(blackoutButton);
         $(buttonBarLocation).after(noiseButton);
+        $(buttonBarLocation).after(bugButton);
+        $(buttonBarLocation).after(featureButton);
         blackoutProfileStyle = $('.TopbarPageHeaderGlobalActions .Avatar').attr('style');
 
         $('.TopbarContingentUpgradeLink').hide();
@@ -113,6 +149,29 @@ $(document).ready(function(){
         if (Cookies.get('noiseButtonStatus') === 'true'){
             $('#noiseButton').trigger('click');
         }
+
+        // BUG TRIGGERS
+        $('#bugButton').on('click', function(){
+            $('.TopbarPageHeaderGlobalActions-omnibutton').trigger('mouseover').trigger('mousedown').trigger('click').trigger('keypress');
+            setTimeout(function() {
+                document.querySelector('.Omnibutton-addTask').click();
+                setTimeout(function() {
+                    $('.QuickAddPopOutContents-descriptionEditor .ql-editor').html(bugXml);
+                }, 500);
+            }, 100);
+        });
+
+        // FEATURE TRIGGERS
+        $('#featureButton').on('click', function(){
+            $('.TopbarPageHeaderGlobalActions-omnibutton').trigger('mouseover').trigger('mousedown').trigger('click').trigger('keypress');
+            setTimeout(function() {
+                document.querySelector('.Omnibutton-addTask').click();
+                setTimeout(function() {
+                    $('.QuickAddPopOutContents-descriptionEditor .ql-editor').html(featureXml);
+                }, 500);
+            }, 100);
+        });
+
     });
 });
 
