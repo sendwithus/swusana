@@ -1,5 +1,9 @@
 # Changelog
 
+0.11.0
+--
+- Added two buttons to create bug / feature tasks with a template.  The template is loaded from the the swusana github directory /templates.
+
 0.10.3
 --
 - Remove the upgrade button from the top bar.
