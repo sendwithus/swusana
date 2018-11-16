@@ -1,0 +1,19 @@
+<div><b>Steps to reproduce</b></div>
+
+<ol class="extended-list-wrapper">
+  <li data-extended-list="1" class="extended-list indent-1" data-indent="1">step</li>
+</ol>
+
+<div><br></div>
+
+<div><b>Expected Behaviour</b></div>
+<ol class="extended-list-wrapper">
+  <li data-extended-bullet="1" class="extended-bullet indent-1" data-indent="1">What I wanted</li>
+</ol>
+
+<div><br></div>
+
+<div><b>Actual Behaviour</b></div>
+<ol class="extended-list-wrapper">
+  <li data-extended-bullet="1" class="extended-bullet indent-1" data-indent="1">What I saw</li>
+</ol>
