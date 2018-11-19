@@ -6,8 +6,10 @@
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
 // @grant        GM_xmlhttpRequest
-// @require http://code.jquery.com/jquery-1.12.4.min.js
-// @require https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js
+// @updateURL    https://github.com/sendwithus/swusana/blob/master/swusana.user.js
+// @downloadURL  https://github.com/sendwithus/swusana/blob/master/swusana.user.js
+// @require      http://code.jquery.com/jquery-1.12.4.min.js
+// @require      https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js
 // ==/UserScript==
 
 // TODO create some better buttons
