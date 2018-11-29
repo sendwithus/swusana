@@ -1,5 +1,9 @@
 # Changelog
 
+0.11.1
+--
+- Updated the feature button title and templates for features / bugs
+
 0.11.0
 --
 - Added two buttons to create bug / feature tasks with a template.  The template is loaded from the the swusana github directory /templates.
