@@ -1,19 +1,41 @@
-<div><b>Steps to reproduce</b></div>
+<div>
+  <b>** :: BUG :: **</b>
+</div>
 
-<ol class="extended-list-wrapper">
-  <li data-extended-list="1" class="extended-list indent-1" data-indent="1">step</li>
-</ol>
-
+<div>TITLE: Feature - Description of bug</div>
+<div><br></div>
+<div>IS CRITICAL: YES/NO [filled out by PRD/ENG]</div>
+<div><br></div>
+  
+<div>
+  <b>Description</b>
+</div>
+<div>- Account you used</div>
+<div>- Environment: Production or staging</div>
+<div>- Repro rate: %</div>
 <div><br></div>
 
-<div><b>Expected Behaviour</b></div>
+<div>
+  <b>Repro steps</b>
+</div>
 <ol class="extended-list-wrapper">
-  <li data-extended-bullet="1" class="extended-bullet indent-1" data-indent="1">What I wanted</li>
+  <li data-extended-list="1" class="extended-list indent-1" data-indent="1">
+    <br>
+  </li>
 </ol>
-
+    
+<div>Expected Result:</div>
+<div>Actual Result:</div>
 <div><br></div>
-
-<div><b>Actual Behaviour</b></div>
+  
+<div>
+  <b>Notes</b>
+</div>
 <ol class="extended-list-wrapper">
-  <li data-extended-bullet="1" class="extended-bullet indent-1" data-indent="1">What I saw</li>
+  <li data-extended-bullet="1" class="extended-bullet indent-1" data-indent="1">
+    Add supporting information and links here. Example: Sentry issue URL, Cloudwatch log, URL to external resource, etc.
+  </li>
+  <li data-extended-bullet="1" class="extended-bullet indent-1" data-indent="1">
+    Don't forget to add an attachment
+  </li>
 </ol>
