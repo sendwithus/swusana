@@ -1,5 +1,8 @@
 # Changelog
 
+0.11.1
+--
+- Fixed bug where blackout icon changes to the wrong icon when unselected.
 0.11.0
 --
 - Added two buttons to create bug / feature tasks with a template.  The template is loaded from the the swusana github directory /templates.

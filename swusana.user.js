@@ -8,8 +8,8 @@
 // @grant        GM_xmlhttpRequest
 // @updateURL    https://github.com/sendwithus/swusana/blob/master/swusana.user.js
 // @downloadURL  https://github.com/sendwithus/swusana/blob/master/swusana.user.js
-// @require      http://code.jquery.com/jquery-1.12.4.min.js
-// @require      https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js
+// @require http://code.jquery.com/jquery-1.12.4.min.js
+// @require https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js
 // ==/UserScript==
 
 // TODO create some better buttons
@@ -127,7 +127,7 @@ $(document).ready(function(){
                     $('#blackoutButton img').attr('src', 'https://media.giphy.com/media/79VehauAiiSLS/giphy.gif');
                 }
             } else {
-                $('#blackoutButton img').attr('src', 'https://cdn2.iconfinder.com/data/icons/picons-basic-2/57/basic2-108_user_remove-128.png');
+                $('#blackoutButton img').attr('src', 'http://cdn.onlinewebfonts.com/svg/img_314578.png');
             }
         });
 
