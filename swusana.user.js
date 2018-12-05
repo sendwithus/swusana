@@ -14,7 +14,7 @@
 
 // TODO create some better buttons
 var bugButton = $('<a id="bugButton" title="add bug" class="NavigationLink Topbar-imageButton swusana-button" href="javascript:;"><img height="24" src="https://us.123rf.com/450wm/blankstock/blankstock1409/blankstock140900675/31370510-bug-sign-icon-virus-symbol-software-bug-error-disinfection-circle-flat-button-with-shadow-modern-ui-.jpg?ver=6"></a>')
-var featureButton = $('<a id="featureButton" title="add bug" class="NavigationLink Topbar-imageButton swusana-button" href="javascript:;"><img height="24" src="http://cdn.onlinewebfonts.com/svg/img_346035.png"></a>')
+var featureButton = $('<a id="featureButton" title="add feature" class="NavigationLink Topbar-imageButton swusana-button" href="javascript:;"><img height="24" src="http://cdn.onlinewebfonts.com/svg/img_346035.png"></a>')
 var imageButton = $('<a id="imageButton" title="add image" class="NavigationLink Topbar-imageButton swusana-button" href="javascript:;"><img height="24" src="https://cdn2.iconfinder.com/data/icons/media-and-navigation-buttons-round/512/Button_16-512.png"></a>')
 var noiseButton = $('<a id="noiseButton" title="hide/show noise" class="NavigationLink Topbar-noiseButton swusana-button" href="javascript:;"><img height="24" src="https://icon-rainbow.com/i/icon_00671/icon_006710_256.png"></a>');
 var blackoutButton = $('<a id="blackoutButton" title="turn on/off blackout period" class="NavigationLink Topbar-blackoutButton swusana-button" href="javascript:;"><img height="24" src="http://cdn.onlinewebfonts.com/svg/img_314578.png"></a>');
@@ -201,13 +201,11 @@ function updateCustomFields(){
 
         waitForEl('.CustomPropertyDetailsContainer-row', function(){
             $('.CustomPropertyDetailsContainer-row').each(function(i, item){
-                console.log(item);
                 customFields.push($(item).detach());
             });
             customFields.sort(function(a, b){
                 var aName = $(a, 'label').text();
                 var bName = $(b, 'label').text();
-                console.log(aName, bName);
                 return aName.localeCompare(bName);
             });
             for (var i = 0; i < customFields.length; i++){
