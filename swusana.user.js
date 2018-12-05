@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Swusana
 // @namespace    http://tampermonkey.net/
-// @version      0.11.1
+// @version      0.12.0
 // @description  Asana Productivity Enhancements including - Noise Reduction.  Blackout periods.  Timer
 // @author       will@sendwithus.com
 // @match        https://app.asana.com/*
@@ -188,11 +188,32 @@ var observer = new MutationObserver(function(mutations, observer) {
             mutation.addedNodes.forEach(function(m){
                 if (m.classList && (m.classList.contains('SingleTaskPane') || m.classList.contains('PotListPage-detailsPane'))){
                     timer = new Date().getTime();
+                    updateCustomFields();
                 }
             });
         }
     });
 });
+
+function updateCustomFields(){
+    if (noiseButtonOn){
+        var customFields = [];
+
+        waitForEl('.CustomPropertyDetailsContainer-row', function(){
+            $('.CustomPropertyDetailsContainer-row').each(function(i, item){
+                customFields.push($(item).detach());
+            });
+            customFields.sort(function(a, b){
+                var aName = $(a, 'label').text();
+                var bName = $(b, 'label').text();
+                return aName.localeCompare(bName);
+            });
+            for (var i = 0; i < customFields.length; i++){
+                $('.CustomPropertyDetailsContainer-table').append(customFields[i]);
+            }
+        });
+    }
+}
 
 observer.observe(target, {
     subtree: true,

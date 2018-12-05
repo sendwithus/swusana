@@ -1,5 +1,9 @@
 # Changelog
 
+0.12.0
+--
+- Alphabetize the custom fields.
+
 0.11.2
 --
 - Fixed title on add feature button.
