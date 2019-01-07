@@ -4,7 +4,8 @@
 
 <div>TITLE: Feature - Description of bug</div>
 <div><br></div>
-<div>IS CRITICAL: YES/NO [filled out by PRD/ENG]</div>
+<div>IS CRITICAL PRD: YES/NO</div>
+<div>IS CRITICAL ENG: YES/NO</div>
 <div><br></div>
   
 <div>
