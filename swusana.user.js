@@ -59,7 +59,7 @@ GM_xmlhttpRequest({
 });
 
 // ONLOAD
-var buttonBarLocation = '.topbarHelpMenuButton';
+var buttonBarLocation = '.TopbarHelpMenuButton';
 $(document).ready(function(){
     waitForEl(buttonBarLocation, function(){
         $(buttonBarLocation).after(timerButton);
