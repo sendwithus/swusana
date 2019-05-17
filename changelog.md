@@ -1,5 +1,9 @@
 # Changelog
 
+0.13.0
+--
+- updated a selector to reflect change in Asana source
+
 0.12.0
 --
 - Alphabetize the custom fields.
