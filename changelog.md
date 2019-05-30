@@ -1,5 +1,9 @@
 # Changelog
 
+0.14.0
+--
+- BUGFIX: bug/feature templates selector updated to reflect change in Asana source
+
 0.13.0
 --
 - updated a selector to reflect change in Asana source
